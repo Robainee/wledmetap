@@ -28,6 +28,7 @@ jobs:
         unzip /tmp/WLEDtemp/mm.zip -d /tmp/WLEDtemp
         find /tmp/WLEDtemp -maxdepth 1 -mindepth 1 -name "*" -type d >> /tmp/WLEDtemp/wledfoldername
         cd `cat /tmp/WLEDtemp/wledfoldername`
+        cp $GITHUB_WORKSPACE/usermod_uart_preset_notifier.cpp ./usermods/
         npm install
         echo '[env:custom_build]' >>platformio.ini
         echo 'extends = env:esp32c3dev_4MB_M' >>platformio.ini
