@@ -29,41 +29,43 @@ jobs:
         find /tmp/WLEDtemp -maxdepth 1 -mindepth 1 -name "*" -type d >> /tmp/WLEDtemp/wledfoldername
         cd `cat /tmp/WLEDtemp/wledfoldername`
         npm install
-        echo '[env:custom_build]' >>platformio.ini
-        echo 'platform = espressif32' >>platformio.ini
-        echo 'board = esp32-c3-devkitm-1' >>platformio.ini
+        echo '[env:esp01_1m_uart]' >>platformio.ini
+        echo 'platform = espressif8266' >>platformio.ini
+        echo 'board = esp01_1m' >>platformio.ini
         echo 'framework = arduino' >>platformio.ini
-                echo 'build_flags =' >>platformio.ini
-        echo '  ${env:esp32c3dev_4MB_M.build_flags}' >>platformio.ini
-        echo '  -D WLED_DISABLE_MQTT' >>platformio.ini
-        echo '  -D WLED_DISABLE_LOXONE' >>platformio.ini
-        echo '  -D WLED_DISABLE_HUESYNC' >>platformio.ini
-        echo '  -D WLED_DISABLE_SNTP' >>platformio.ini
-        echo '  -D WLED_DISABLE_CRONIXIE' >>platformio.ini
-        echo '  -D WLED_DISABLE_TIME' >>platformio.ini
+        echo '' >>platformio.ini
+        echo 'build_flags = ' >>platformio.ini
+        echo '  -D USERMOD_UART_PRESET_NOTIFIER' >>platformio.ini
+        echo '  -D LEDPIN=4                    ' >>platformio.ini
+        echo '  -D RLYPIN=16                   ' >>platformio.ini
+        echo '  -D RLYMDE=1                   ' >>platformio.ini
+        echo '  -D MAX_LEDS=40                ' >>platformio.ini
+        echo '  -D LED_TYPES=TYPE_WS2812_RGB   ' >>platformio.ini
+        echo '  -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB' >>platformio.ini
+        echo '  -D ABL_MILLIAMPS_DEFAULT=850  ' >>platformio.ini
+        echo '-D WLED_DISABLE_FLOWS' >>platformio.ini
+        echo '-D WLED_DISABLE_INFRARED' >>platformio.ini
+        echo '-D WLED_DISABLE_WEBSOCKETS' >>platformio.ini
+        echo '-D WLED_DISABLE_ALEXA' >>platformio.ini
+        echo '-D WLED_DISABLE_DISCOVERY' >>platformio.ini
+        echo '-D WLED_DISABLE_HUESYNC' >>platformio.ini
+        echo '-D WLED_DISABLE_MQTT' >>platformio.ini
+        echo '-D WLED_DISABLE_LOXONE' >>platformio.ini
+        echo '-D WLED_DISABLE_BLYNK' >>platformio.ini
+        echo '-D WLED_DISABLE_CRONIXIE' >>platformio.ini
         echo '  -D USERMOD_ENABLE_TEMPERATURE=false' >>platformio.ini
         echo '  -D USERMOD_ENABLE_SENSOR=false' >>platformio.ini
-        echo '  -D USERMOD_ENABLE_DALLAS=false' >>platformio.ini
-        echo '  -D USERMOD_ENABLE_IMU=false' >>platformio.ini
-        echo '  -D USERMOD_ENABLE_HDC1080=false' >>platformio.ini
-        echo '  -D USERMOD_ENABLE_NTP=false' >>platformio.ini
-        echo '  -D USERMOD_ENABLE_PIR=false' >>platformio.ini
-        echo '  -D USERMOD_ENABLE_SHT=false' >>platformio.ini
-        echo '  -D USERMOD_ENABLE_TELEINFO=false' >>platformio.ini
-        echo '  -D USERMOD_ENABLE_DHT=false' >>platformio.ini
-        echo '  -D USERMOD_UART_PRESET_NOTIFIER' >>platformio.ini
-        echo '  -D DATA_PINS=4' >>platformio.ini
-        echo '  -D RLYPIN=16' >>platformio.ini
-        echo '  -D RLYMDE=1' >>platformio.ini
-        echo '  -D ABL_MILLIAMPS_DEFAULT=0' >>platformio.ini
-        echo '  -D LED_TYPES=TYPE_WS2812_RGB' >>platformio.ini
-        echo '  -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB' >>platformio.ini
-        echo '  -D MAX_LEDS=40' >>platformio.ini
-        echo '  -D CLIENT_SSID="\"ESPEETJE\""' >>platformio.ini
-        echo '  -D CLIENT_PASS="\"0594249321\""' >>platformio.ini
         echo '' >>platformio.ini
+        echo 'build_unflags = ' >>platformio.ini
+        echo '  -D BOARD_HAS_PSRAM ' >>platformio.ini
+        echo '  -D WLED_USE_PSRAM ' >>platformio.ini
+        echo '  -D WLED_USE_PSRAM_JSON ' >>platformio.ini
+        echo '  -D ALL_JSON_TO_PSRAM' >>platformio.ini
+        echo '' >>platformio.ini
+        echo 'upload_speed = 115200' >>platformio.ini
+        echo 'monitor_speed = 74880' >>platformio.ini
+        
         echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
-
         mkdir -p /tmp/WLEDtemp/`cat /tmp/WLEDtemp/wledfoldername`/usermods/usermod_uart_preset_notifier
         cp $GITHUB_WORKSPACE/usermods/usermod_uart_preset_notifier/usermod_uart_preset_notifier.cpp /tmp/WLEDtemp/`cat /tmp/WLEDtemp/wledfoldername`/usermods/usermod_uart_preset_notifier/
 
