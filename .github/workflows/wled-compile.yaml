@@ -56,7 +56,7 @@ jobs:
         echo '  -D RLYPIN=16' >>platformio.ini
         echo '  -D RLYMDE=1' >>platformio.ini
         echo '  -D ABL_MILLIAMPS_DEFAULT=0' >>platformio.ini
-        echo '  -D LED_TYPES=TYPE_WS2812' >>platformio.ini
+        echo '  -D LED_TYPES=TYPE_WS2812_RGB' >>platformio.ini
         echo '  -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB' >>platformio.ini
         echo '  -D MAX_LEDS=40' >>platformio.ini
         echo '  -D CLIENT_SSID="\"ESPEETJE\""' >>platformio.ini
