@@ -1,3 +1,53 @@
-[env:custom_build]
-extends = env:esp32c3dev_4MB_M
-build_flags = ${env:esp32c3dev_4MB_M.build_flags} -D LOLIN_WIFI_FIX -D WLED_DISABLE_MQTT -D WLED_DISABLE_LOXONE -D WLED_DISABLE_HUESYNC -D DATA_PINS= -D RLYPIN=0 -D RLYMDE=0 -D ABL_MILLIAMPS_DEFAULT=0 -D LED_TYPES= -D DEFAULT_LED_COLOR_ORDER= -D MAX_LEDS=40 -D CLIENT_SSID='"ESPEETJE"' -D CLIENT_PASS='"0594249321"'   -D USERMOD_UART_PRESET_NOTIFIER
+name: WLED compile
+
+on:
+    workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.9
+
+    - name: Install PlatformIO
+      run: |
+        python -m pip install --upgrade pip
+        pip install --upgrade platformio
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+    - name: Run PlatformIO
+      run: |
+        rm -rf /tmp/WLEDtemp/* || true
+        mkdir -p /tmp/WLEDtemp
+        wget https://github.com/wled/WLED/archive/refs/heads/main.zip -O /tmp/WLEDtemp/mm.zip
+        unzip /tmp/WLEDtemp/mm.zip -d /tmp/WLEDtemp
+        find /tmp/WLEDtemp -maxdepth 1 -mindepth 1 -name "*" -type d >> /tmp/WLEDtemp/wledfoldername
+        cd `cat /tmp/WLEDtemp/wledfoldername`
+        npm install
+        echo '[env:custom_build]' >>platformio.ini
+        echo 'extends = env:esp32c3dev_4MB_M' >>platformio.ini
+        echo 'build_flags = ${env:esp32c3dev_4MB_M.build_flags} -D LOLIN_WIFI_FIX -D WLED_DISABLE_MQTT -D WLED_DISABLE_LOXONE -D WLED_DISABLE_HUESYNC -D DATA_PINS= -D RLYPIN=0 -D RLYMDE=0 -D ABL_MILLIAMPS_DEFAULT=0 -D LED_TYPES= -D DEFAULT_LED_COLOR_ORDER= -D MAX_LEDS=40 -D CLIENT_SSID='\''"ESPEETJE"'\'' -D CLIENT_PASS='\''"0594249321"'\''   -D USERMOD_UART_PRESET_NOTIFIER' >>platformio.ini
+        
+        echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
+        pio run -e custom_build || pio run -e custom_build
+    - name: Copy Files
+      run: |
+        cd $GITHUB_WORKSPACE
+        git rm -r $GITHUB_WORKSPACE/*.bin || true
+        WLEDFOLDERNAME=`cat /tmp/WLEDtemp/wledfoldername`
+        cp ${WLEDFOLDERNAME}/build_output/firmware/custom_build.bin $GITHUB_WORKSPACE/
+        date -I | tr -d '\n' >$GITHUB_WORKSPACE/last_update_date.txt
+    - name: Commit Files
+      run: |
+        cd $GITHUB_WORKSPACE
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+        git add $GITHUB_WORKSPACE/custom_build.bin
+        git add $GITHUB_WORKSPACE/last_update_date.txt
+        git commit -m "Commit Custom Build"
+        git push origin main
