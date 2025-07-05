@@ -61,11 +61,11 @@ jobs:
         echo '  -D WLED_USE_PSRAM ' >>platformio.ini
         echo '  -D WLED_USE_PSRAM_JSON ' >>platformio.ini
         echo '  -D ALL_JSON_TO_PSRAM' >>platformio.ini
+        echo '  -D WLED_RELEASE_NAME' >>platformio.ini
         echo '' >>platformio.ini
         echo 'upload_speed = 115200' >>platformio.ini
         echo 'monitor_speed = 74880' >>platformio.ini
         
-        echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
         mkdir -p /tmp/WLEDtemp/`cat /tmp/WLEDtemp/wledfoldername`/usermods/usermod_uart_preset_notifier
         cp $GITHUB_WORKSPACE/usermods/usermod_uart_preset_notifier/usermod_uart_preset_notifier.cpp /tmp/WLEDtemp/`cat /tmp/WLEDtemp/wledfoldername`/usermods/usermod_uart_preset_notifier/
 
