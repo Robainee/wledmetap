@@ -36,7 +36,7 @@ jobs:
           echo 'platform = espressif8266' >> platformio.ini
           echo 'board = esp01_1m_full_compat' >> platformio.ini
           echo 'framework = arduino' >> platformio.ini
-          echo 'build_flags = -D WLED_DISABLE_ALL_USERMODS -D USERMOD_INCLUDE="usermod_uart_preset_notifier.cpp" -D LEDPIN=4 -D RLYPIN=16 -D RLYMDE=1 -D MAX_LEDS=40 -D LED_TYPES=TYPE_WS2812_RGB -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB -D ABL_MILLIAMPS_DEFAULT=850 -D USERMOD_ENABLE_TEMPERATURE=false -D USERMOD_ENABLE_SENSOR=false -D WLED_DISABLE_MQTT -D WLED_DISABLE_LOXONE -D WLED_DISABLE_HUESYNC -D WLED_DISABLE_FLOWS -D WLED_DISABLE_INFRARED -D WLED_DISABLE_WEBSOCKETS -D WLED_DISABLE_ALEXA -D WLED_DISABLE_DISCOVERY -D WLED_DISABLE_BLYNK -D WLED_DISABLE_CRONIXIE' >> platformio.ini
+          echo 'build_flags = -D USERMOD_INCLUDE="usermod_uart_preset_notifier.cpp usermod_multirelay.cpp" -D LEDPIN=4 -D RLYPIN=16 -D RLYMDE=1 -D MAX_LEDS=40 -D LED_TYPES=TYPE_WS2812_RGB -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB -D ABL_MILLIAMPS_DEFAULT=850 -D USERMOD_ENABLE_TEMPERATURE=false -D USERMOD_ENABLE_SENSOR=false -D WLED_DISABLE_MQTT -D WLED_DISABLE_LOXONE -D WLED_DISABLE_HUESYNC -D WLED_DISABLE_FLOWS -D WLED_DISABLE_INFRARED -D WLED_DISABLE_BLYNK -D WLED_DISABLE_CRONIXIE' >> platformio.ini
           echo 'build_unflags = -D BOARD_HAS_PSRAM -D WLED_USE_PSRAM -D WLED_USE_PSRAM_JSON -D ALL_JSON_TO_PSRAM' >> platformio.ini
           echo 'upload_speed = 115200' >> platformio.ini
           echo 'monitor_speed = 74880' >> platformio.ini
