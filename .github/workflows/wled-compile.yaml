@@ -27,8 +27,9 @@ jobs:
         wget https://github.com/wled/WLED/archive/refs/heads/main.zip -O /tmp/WLEDtemp/mm.zip
         unzip /tmp/WLEDtemp/mm.zip -d /tmp/WLEDtemp
         find /tmp/WLEDtemp -maxdepth 1 -mindepth 1 -name "*" -type d >> /tmp/WLEDtemp/wledfoldername
-        cd cat /tmp/WLEDtemp/wledfoldername
+        cd `cat /tmp/WLEDtemp/wledfoldername`
         npm install
+        echo '[env:custom_build]' >>platformio.ini
         echo '[env:esp01_1m_uart]' >>platformio.ini
         echo 'platform = espressif8266' >>platformio.ini
         echo 'board = esp01_1m_full_compat' >>platformio.ini
@@ -42,6 +43,7 @@ jobs:
          cp $GITHUB_WORKSPACE/usermods/usermod_uart_preset_notifier/usermod_uart_preset_notifier.cpp ./usermods/usermod_uart_preset_notifier/
 
         pio run -e esp01_1m_uart || pio run -e esp01_1m_uart
+
       - name: Copy Files
         run: |
           cd $GITHUB_WORKSPACE
@@ -49,12 +51,12 @@ jobs:
           cp /tmp/WLEDtemp/WLED-main/.pio/build/esp01_1m_uart/firmware.bin $GITHUB_WORKSPACE/custom_build.bin
           date -I | tr -d '\n' > $GITHUB_WORKSPACE/last_update_date.txt
 
-      - name: Commit Files
-        run: |
-          cd $GITHUB_WORKSPACE
-          git config user.name "GitHub Actions Bot"
-          git config user.email "bot@users.noreply.github.com"
-          git add custom_build.bin
-          git add last_update_date.txt
-          git commit -m "Commit Custom Build"
-          git push origin main
+    - name: Commit Files
+      run: |
+        cd $GITHUB_WORKSPACE
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+        git add $GITHUB_WORKSPACE/custom_build.bin
+        git add $GITHUB_WORKSPACE/last_update_date.txt
+        git commit -m "Commit Custom Build"
+        git push origin main
