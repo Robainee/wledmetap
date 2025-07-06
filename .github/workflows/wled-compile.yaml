@@ -1,14 +1,14 @@
 name: WLED compile
 
 on:
-  workflow_dispatch:
+    workflow_dispatch:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -18,51 +18,43 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install --upgrade platformio
-
     - name: Set up Node.js
       uses: actions/setup-node@v4
-
     - name: Run PlatformIO
       run: |
         rm -rf /tmp/WLEDtemp/* || true
         mkdir -p /tmp/WLEDtemp
-        wget https://github.com/Aircoookie/WLED/archive/refs/heads/main.zip -O /tmp/WLEDtemp/mm.zip
+        wget https://github.com/wled/WLED/archive/refs/heads/main.zip -O /tmp/WLEDtemp/mm.zip
         unzip /tmp/WLEDtemp/mm.zip -d /tmp/WLEDtemp
-        WLEDFOLDERNAME=$(find /tmp/WLEDtemp -maxdepth 1 -mindepth 1 -type d)
-        cd $WLEDFOLDERNAME
-
-        # Copy usermod in juiste map
-        mkdir -p ./usermods/usermod_uart_preset_notifier
-        cp $GITHUB_WORKSPACE/usermods/usermod_uart_preset_notifier/usermod_uart_preset_notifier.cpp ./usermods/usermod_uart_preset_notifier/
-
-        # Voeg jouw environment toe
-        cat <<EOF >> platformio.ini
-[env:esp01_1m_uart]
-platform = espressif8266
-board = esp01_1m_full
-framework = arduino
-build_flags = -D USERMOD_UART_PRESET_NOTIFIER -D LEDPIN=4 -D RLYPIN=16 -D RLYMDE=1 -D MAX_LEDS=40 -D LED_TYPES=TYPE_WS2812_RGB -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB -D ABL_MILLIAMPS_DEFAULT=850 -D WLED_DISABLE_MQTT -D WLED_DISABLE_LOXONE -D WLED_DISABLE_HUESYNC -D USERMOD_ENABLE_TEMPERATURE=false -D USERMOD_ENABLE_SENSOR=false -D WLED_DISABLE_FLOWS -D WLED_DISABLE_INFRARED -D WLED_DISABLE_WEBSOCKETS -D WLED_DISABLE_ALEXA -D WLED_DISABLE_DISCOVERY -D WLED_DISABLE_BLYNK -D WLED_DISABLE_CRONIXIE
-build_unflags = -D BOARD_HAS_PSRAM -D WLED_USE_PSRAM -D WLED_USE_PSRAM_JSON -D ALL_JSON_TO_PSRAM
-upload_speed = 115200
-monitor_speed = 74880
-EOF
-
+        find /tmp/WLEDtemp -maxdepth 1 -mindepth 1 -name "*" -type d >> /tmp/WLEDtemp/wledfoldername
+        cd cat /tmp/WLEDtemp/wledfoldername
         npm install
+        echo '[env:esp01_1m_uart]' >>platformio.ini
+        echo 'platform = espressif8266' >>platformio.ini
+        echo 'board = esp01_1m_full_compat' >>platformio.ini
+        echo 'framework = arduino' >>platformio.ini
+        echo 'build_flags = -D USERMOD_UART_PRESET_NOTIFIER -D LEDPIN=4 -D RLYPIN=16 -D RLYMDE=1 -D MAX_LEDS=40 -D LED_TYPES=TYPE_WS2812_RGB -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB -D ABL_MILLIAMPS_DEFAULT=850 -D WLED_DISABLE_MQTT -D WLED_DISABLE_LOXONE -D WLED_DISABLE_HUESYNC -D USERMOD_ENABLE_TEMPERATURE=false -D USERMOD_ENABLE_SENSOR=false -D WLED_DISABLE_FLOWS -D WLED_DISABLE_INFRARED -D WLED_DISABLE_WEBSOCKETS -D WLED_DISABLE_ALEXA -D WLED_DISABLE_DISCOVERY -D WLED_DISABLE_BLYNK -D WLED_DISABLE_CRONIXIE' >>platformio.ini
+        echo 'build_unflags = -D BOARD_HAS_PSRAM -D WLED_USE_PSRAM -D WLED_USE_PSRAM_JSON -D ALL_JSON_TO_PSRAM' >>platformio.ini
+        echo 'upload_speed = 115200' >>platformio.ini
+        echo 'monitor_speed = 74880' >>platformio.ini
+        
+         mkdir -p ./usermods/usermod_uart_preset_notifier
+         cp $GITHUB_WORKSPACE/usermods/usermod_uart_preset_notifier/usermod_uart_preset_notifier.cpp ./usermods/usermod_uart_preset_notifier/
+
         pio run -e esp01_1m_uart || pio run -e esp01_1m_uart
+      - name: Copy Files
+        run: |
+          cd $GITHUB_WORKSPACE
+          git rm -r $GITHUB_WORKSPACE/*.bin || true
+          cp /tmp/WLEDtemp/WLED-main/.pio/build/esp01_1m_uart/firmware.bin $GITHUB_WORKSPACE/custom_build.bin
+          date -I | tr -d '\n' > $GITHUB_WORKSPACE/last_update_date.txt
 
-    - name: Copy Files
-      run: |
-        cd $GITHUB_WORKSPACE
-        git rm -r $GITHUB_WORKSPACE/*.bin || true
-        cp /tmp/WLEDtemp/WLED-main/.pio/build/esp01_1m_uart/firmware.bin $GITHUB_WORKSPACE/custom_build.bin
-        date -I | tr -d '\n' > $GITHUB_WORKSPACE/last_update_date.txt
-
-    - name: Commit Files
-      run: |
-        cd $GITHUB_WORKSPACE
-        git config user.name "GitHub Actions Bot"
-        git config user.email "<>"
-        git add custom_build.bin
-        git add last_update_date.txt
-        git commit -m "Commit Custom Build"
-        git push origin main
+      - name: Commit Files
+        run: |
+          cd $GITHUB_WORKSPACE
+          git config user.name "GitHub Actions Bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add custom_build.bin
+          git add last_update_date.txt
+          git commit -m "Commit Custom Build"
+          git push origin main
