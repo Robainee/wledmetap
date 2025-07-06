@@ -28,9 +28,16 @@ jobs:
           mkdir -p /tmp/WLEDtemp
           wget https://github.com/Robainee/wledmetap/raw/main/WLED-main.zip -O /tmp/WLEDtemp/mm.zip
           unzip /tmp/WLEDtemp/mm.zip -d /tmp/WLEDtemp
-          find /tmp/WLEDtemp -maxdepth 1 -mindepth 1 -name "*" -type d > /tmp/WLEDtemp/wledfoldername
-          cd `cat /tmp/WLEDtemp/wledfoldername`
-          
+          WLEDFOLDERNAME=$(find /tmp/WLEDtemp -maxdepth 1 -mindepth 1 -type d -name "WLED-main*")
+          cd $WLEDFOLDERNAME
+
+          mkdir -p ./usermods/usermod_uart_preset_notifier
+          cp $GITHUB_WORKSPACE/usermods/usermod_uart_preset_notifier/usermod_uart_preset_notifier.cpp ./usermods/usermod_uart_preset_notifier/
+
+          mkdir -p ./usermods/usermod_multi_relay
+          cp $GITHUB_WORKSPACE/usermods/usermod_multi_relay/usermod_multi_relay.cpp ./usermods/usermod_multi_relay/
+
+          cat <<EOF >> platformio.ini
 
           echo '[env:esp01_1m_full]' >> platformio.ini
           echo 'platform = espressif8266' >> platformio.ini
@@ -41,9 +48,8 @@ jobs:
           echo 'upload_speed = 115200' >> platformio.ini
           echo 'monitor_speed = 74880' >> platformio.ini
 
-          mkdir -p ./usermods/usermod_uart_preset_notifier
-          cp $GITHUB_WORKSPACE/usermods/usermod_uart_preset_notifier/usermod_uart_preset_notifier.cpp ./usermods/usermod_uart_preset_notifier/
 
+          cp -r wled00 src
           pio run -e esp01_1m_full || pio run -e esp01_1m_full
 
       - name: Copy Files
