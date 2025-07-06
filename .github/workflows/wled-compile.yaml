@@ -51,7 +51,7 @@ jobs:
           cd $GITHUB_WORKSPACE
           git rm -r $GITHUB_WORKSPACE/*.bin || true
           WLEDFOLDERNAME=`cat /tmp/WLEDtemp/wledfoldername`
-          cp ${WLEDFOLDERNAME}/build_output/firmware/esp01_1m_full_compat $GITHUB_WORKSPACE/
+          find ${WLEDFOLDERNAME}/build_output/firmware/ -name '*.bin' -exec cp {} $GITHUB_WORKSPACE/custom_build.bin \;
           date -I | tr -d '\n' >$GITHUB_WORKSPACE/last_update_date.txt
 
       - name: Commit Files
