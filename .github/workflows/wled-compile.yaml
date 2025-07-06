@@ -49,7 +49,7 @@ jobs:
       - name: Copy Files
         run: |
           cd $GITHUB_WORKSPACE
-          find /build_output/release/WLED_0.16.0-alpha_ESP01_compat.bin -exec cp {} $GITHUB_WORKSPACE/ \;
+          find ${WLEDFOLDERNAME}/build_output/firmware/ -name '*.bin' - -exec cp {} $GITHUB_WORKSPACE/ \;
           date -I | tr -d '\n' > $GITHUB_WORKSPACE/last_update_date.txt
 
       - name: Commit Files
