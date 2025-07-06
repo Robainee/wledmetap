@@ -49,7 +49,7 @@ jobs:
           echo 'monitor_speed = 74880' >> platformio.ini
 
 
-          cp -r wled00 src
+          cp -r wled00 ./src
           pio run -e esp01_1m_full || pio run -e esp01_1m_full
 
       - name: Copy Files
