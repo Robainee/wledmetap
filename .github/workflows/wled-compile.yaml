@@ -48,14 +48,13 @@ jobs:
           echo 'monitor_speed = 74880' >> platformio.ini
 
 
-          cp -r $WLEDFOLDERNAME/wled00 $WLEDFOLDERNAME/src
-          cd $WLEDFOLDERNAME
+
           pio run -e esp01_1m_full || pio run -e esp01_1m_full
 
       - name: Copy Files
         run: |
           cd $GITHUB_WORKSPACE
-          find /tmp/WLEDtemp/WLED-main/WLED-main/.pio/build/esp01_1m_uart/ -name '*.bin' -exec cp {} $GITHUB_WORKSPACE/ \;
+          find /tmp/WLEDtemp/WLED-main/.pio/build/esp01_1m_uart/ -name '*.bin' -exec cp {} $GITHUB_WORKSPACE/ \;
 
           date -I | tr -d '\n' > $GITHUB_WORKSPACE/last_update_date.txt
 
