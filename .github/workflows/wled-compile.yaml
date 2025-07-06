@@ -32,7 +32,7 @@ jobs:
           cd `cat /tmp/WLEDtemp/wledfoldername`
           npm install
 
-          echo '[env:esp01_1m_full_compat]' >> platformio.ini
+          echo '[env:esp01_1m_full_mongol]' >> platformio.ini
           echo 'platform = espressif8266' >> platformio.ini
           echo 'board = esp01_1m' >> platformio.ini
           echo 'framework = arduino' >> platformio.ini
@@ -51,7 +51,7 @@ jobs:
           cd $GITHUB_WORKSPACE
           git rm -r $GITHUB_WORKSPACE/*.bin || true
           WLEDFOLDERNAME=$(cat /tmp/WLEDtemp/wledfoldername)
-          cp ${WLEDFOLDERNAME}/build_output/firmware/esp01_1m_uart.bin $GITHUB_WORKSPACE/
+          cp ${WLEDFOLDERNAME}/build_output/firmware/esp01_1m_full_mongol.bin $GITHUB_WORKSPACE/
           date -I | tr -d '\n' > $GITHUB_WORKSPACE/last_update_date.txt
 
       - name: Commit Files
