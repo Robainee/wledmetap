@@ -32,7 +32,7 @@ jobs:
           cd `cat /tmp/WLEDtemp/wledfoldername`
           
 
-          echo '[env:esp01_1m_full_mongol]' >> platformio.ini
+          echo '[env:esp01_1m_full_compat]' >> platformio.ini
           echo 'platform = espressif8266' >> platformio.ini
           echo 'board = esp01_1m_full_compat' >> platformio.ini
           echo 'framework = arduino' >> platformio.ini
