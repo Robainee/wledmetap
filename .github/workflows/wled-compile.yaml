@@ -49,17 +49,15 @@ jobs:
       - name: Copy Files
         run: |
           cd $GITHUB_WORKSPACE
-          git rm -r $GITHUB_WORKSPACE/*.bin || true
-          WLEDFOLDERNAME=`cat /tmp/WLEDtemp/wledfoldername`
-          find ${WLEDFOLDERNAME}/build_output/firmware/ -name '*.bin' -exec cp {} $GITHUB_WORKSPACE/custom_build.bin \;
-          date -I | tr -d '\n' >$GITHUB_WORKSPACE/last_update_date.txt
+          find /build_output/release/WLED_0.16.0-alpha_ESP01_compat.bin -exec cp {} $GITHUB_WORKSPACE/ \;
+          date -I | tr -d '\n' > $GITHUB_WORKSPACE/last_update_date.txt
 
       - name: Commit Files
         run: |
           cd $GITHUB_WORKSPACE
           git config user.name "GitHub Actions Bot"
-          git config user.email "<>"
-          git add custom_build.bin
+          git config user.email "bot@users.noreply.github.com"
+          git add *.bin || true
           git add last_update_date.txt
-          git commit -m "Commit Custom Build"
-          git push origin main
+          git commit -m "Commit Custom Build" || echo "Nothing to commit"
+          git push origin main || echo "Nothing to push"
