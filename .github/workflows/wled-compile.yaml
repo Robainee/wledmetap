@@ -30,7 +30,7 @@ jobs:
           unzip /tmp/WLEDtemp/mm.zip -d /tmp/WLEDtemp
           find /tmp/WLEDtemp -maxdepth 1 -mindepth 1 -name "*" -type d > /tmp/WLEDtemp/wledfoldername
           cd `cat /tmp/WLEDtemp/wledfoldername`
-          npm install
+          
 
           echo '[env:esp01_1m_full_mongol]' >> platformio.ini
           echo 'platform = espressif8266' >> platformio.ini
