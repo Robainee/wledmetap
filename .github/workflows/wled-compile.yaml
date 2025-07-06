@@ -44,7 +44,7 @@ jobs:
           mkdir -p ./usermods/usermod_uart_preset_notifier
           cp $GITHUB_WORKSPACE/usermods/usermod_uart_preset_notifier/usermod_uart_preset_notifier.cpp ./usermods/usermod_uart_preset_notifier/
 
-          pio run -e esp01_1m_full_compat || pio run -e esp01_1m_full
+          pio run -e esp01_1m_full || pio run -e esp01_1m_full_compat
 
       - name: Copy Files
         run: |
