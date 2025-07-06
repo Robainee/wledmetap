@@ -50,8 +50,9 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           git rm -r $GITHUB_WORKSPACE/*.bin || true
-          cp /build_output/release/WLED_0.16.0-alpha_ESP01_compat.bin $GITHUB_WORKSPACE/custom_build.bin
-          date -I | tr -d '\n' > $GITHUB_WORKSPACE/last_update_date.txt
+          WLEDFOLDERNAME=`cat /tmp/WLEDtemp/wledfoldername`
+          cp ${WLEDFOLDERNAME}/build_output/firmware/esp01_1m_full_compat $GITHUB_WORKSPACE/
+          date -I | tr -d '\n' >$GITHUB_WORKSPACE/last_update_date.txt
 
       - name: Commit Files
         run: |
