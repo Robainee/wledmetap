@@ -38,7 +38,7 @@ jobs:
           cp $GITHUB_WORKSPACE/usermods/usermod_multi_relay/usermod_multi_relay.cpp ./usermods/usermod_multi_relay/
 
 
-          echo '[env:esp01_1m_full]' >> platformio.ini
+          echo '[env:esp01_1m_full_mongol]' >> platformio.ini
           echo 'platform = espressif8266' >> platformio.ini
           echo 'board = esp01_1m' >> platformio.ini
           echo 'framework = arduino' >> platformio.ini
