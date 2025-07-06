@@ -37,7 +37,6 @@ jobs:
           mkdir -p ./usermods/usermod_multi_relay
           cp $GITHUB_WORKSPACE/usermods/usermod_multi_relay/usermod_multi_relay.cpp ./usermods/usermod_multi_relay/
 
-          cat <<EOF >> platformio.ini
 
           echo '[env:esp01_1m_full]' >> platformio.ini
           echo 'platform = espressif8266' >> platformio.ini
