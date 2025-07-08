@@ -49,7 +49,7 @@ jobs:
           echo 'lib_ignore = IRremoteESP8266, IRremote, OneWire, Adafruit BMP280 Library, Adafruit CCS811 Library, Adafruit Si7021 Library, Adafruit_MAX1704X, Adafruit_BusIO, MPU6050, SHT85, U8g2, TFT_eSPI, QuickESPNow' >> platformio.ini
 
 
-          pio run -t clean
+
           pio run -e esp01_1m_full || pio run -e esp01_1m_full
 
       - name: Copy Files
