@@ -50,12 +50,12 @@ jobs:
 
 
 
-          pio run -e esp01_1m_full || pio run -e esp01_1m_full
+          pio run -e esp01_1m_full_mongol || pio run -e esp01_1m_full_mongol
 
       - name: Copy Files
         run: |
           cd $GITHUB_WORKSPACE
-          find /tmp/WLEDtemp/WLED-main/.pio/build/esp01_1m_full/ -name '*.bin' -exec cp {} $GITHUB_WORKSPACE/ \;
+          find /tmp/WLEDtemp/WLED-main/.pio/build/esp01_1m_full_mongol/ -name '*.bin' -exec cp {} $GITHUB_WORKSPACE/ \;
 
           date -I | tr -d '\n' > $GITHUB_WORKSPACE/last_update_date.txt
 
