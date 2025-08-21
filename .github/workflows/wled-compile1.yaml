@@ -23,40 +23,83 @@ jobs:
         uses: actions/setup-node@v4
 
       - name: Run PlatformIO
+        shell: bash
         run: |
+          set -e
           rm -rf /tmp/WLEDtemp/* || true
           mkdir -p /tmp/WLEDtemp
           wget https://github.com/Robainee/wledmetap/raw/main/WLED-main.zip -O /tmp/WLEDtemp/mm.zip
           unzip /tmp/WLEDtemp/mm.zip -d /tmp/WLEDtemp
           WLEDFOLDERNAME=$(find /tmp/WLEDtemp -maxdepth 1 -mindepth 1 -type d -name "WLED-main*")
-          cd $WLEDFOLDERNAME
+          cd "$WLEDFOLDERNAME"
 
+          # usermods
           mkdir -p ./usermods/usermod_uart_preset_notifier
-          cp $GITHUB_WORKSPACE/usermods/usermod_uart_preset_notifier/usermod_uart_preset_notifier.cpp ./usermods/usermod_uart_preset_notifier/
-
+          cp "$GITHUB_WORKSPACE/usermods/usermod_uart_preset_notifier/usermod_uart_preset_notifier.cpp" ./usermods/usermod_uart_preset_notifier/
           mkdir -p ./usermods/usermod_multi_relay
-          cp $GITHUB_WORKSPACE/usermods/usermod_multi_relay/usermod_multi_relay.cpp ./usermods/usermod_multi_relay/
+          cp "$GITHUB_WORKSPACE/usermods/usermod_multi_relay/usermod_multi_relay.cpp" ./usermods/usermod_multi_relay/
 
+          # override env (klein & snel)
+          cat > platformio_override.ini <<'EOF'
+[platformio]
+default_envs = esp01_1m_full_mongol
 
-          echo '[env:esp01_1m_full_mongol]' >> platformio.ini
-          echo 'platform = espressif8266' >> platformio.ini
-          echo 'board = esp01_1m' >> platformio.ini
-          echo 'framework = arduino' >> platformio.ini
-          echo 'build_flags = -D USERMOD_UART_PRESET_NOTIFIER -D USERMOD_MULTI_RELAY -D USERMOD_MULTI_RELAY_ID=1338 -D LEDPIN=4 -D RLYPIN=16 -D RLYMDE=1 -D MAX_LEDS=40 -D LED_TYPES=TYPE_WS2812_RGB -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB -D ABL_MILLIAMPS_DEFAULT=850 -DWLED_DISABLE_MQTT=1 -D WLED_DISABLE_2D -D WLED_DISABLE_LOXONE -D WLED_DISABLE_HUESYNC -D USERMOD_ENABLE_TEMPERATURE=false -D USERMOD_ENABLE_SENSOR=false -D WLED_DISABLE_FLOWS -DWLED_DISABLE_INFRARED=1 -DWLED_DISABLE_ALEXA -D WLED_DISABLE_DISCOVERY -D WLED_DISABLE_BLYNK -D WLED_DISABLE_CRONIXIE -D WLED_DISABLE_FILESYSTEM -D WLED_DISABLE_DMX -D WLED_DISABLE_HDL -D WLED_DISABLE_SHELLY_DIMMER -D WLED_DISABLE_OTA=0 -Wl,--gc-sections' >> platformio.ini
-          echo 'build_unflags = -D BOARD_HAS_PSRAM -D WLED_USE_PSRAM -D WLED_USE_PSRAM_JSON -D ALL_JSON_TO_PSRAM -D WLED_DISABLE_OTA' >> platformio.ini
-          echo 'upload_speed = 115200' >> platformio.ini
-          echo 'monitor_speed = 74880' >> platformio.ini
-          echo 'lib_ignore = IRremoteESP8266, IRremote, OneWire, Adafruit BMP280 Library, Adafruit CCS811 Library, Adafruit Si7021 Library, Adafruit_MAX1704X, Adafruit_BusIO, MPU6050, SHT85, U8g2, TFT_eSPI, QuickESPNow' >> platformio.ini
+[env:esp01_1m_full_mongol]
+extends = env:esp01_1m
 
+; meer code-ruimte: geen FS partitie (1M flash)
+board_build.ldscript = eagle.flash.1m0.ld
 
+; minimal lib set (voorkomt onnodige deps)
+lib_deps =
+  ESPAsyncTCP
+  ESPAsyncWebServerWLED
+  ESPAsyncUDP
+  NeoPixelBus
 
-          pio run -e esp01_1m_full_mongol || pio run -e esp01_1m_full_mongol
+build_unflags = ${common.build_unflags} -g
+
+build_flags =
+  ${common.build_flags} ${esp8266.build_flags}
+  -D WLED_RELEASE
+  -D WLED_USE_MINIMAL_UI
+  -D WLED_DISABLE_MQTT
+  -D WLED_DISABLE_ALEXA
+  -D WLED_DISABLE_HUESYNC
+  -D WLED_DISABLE_DMX
+  -D WLED_DISABLE_E131
+  -D WLED_DISABLE_ESPNOW
+  -D WLED_DISABLE_IMPROV
+  -D WLED_DISABLE_WEBSOCKETS
+  -D WLED_DISABLE_ANALOG_LEDS
+  -D WLED_DISABLE_INFRARED
+  -D WLED_DISABLE_FILESYSTEM
+  -D WLED_DISABLE_SHELLY_DIMMER
+  -D WLED_DISABLE_HDL
+  -D WLED_DISABLE_OTA             ; schakelt ArduinoOTA uit, web-UI upload blijft
+  -D PIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY_LOW_FLASH
+  -D USERMOD_UART_PRESET_NOTIFIER
+  -D USERMOD_MULTI_RELAY
+  -D USERMOD_MULTI_RELAY_ID=1338
+  -D LEDPIN=4
+  -D RLYPIN=16
+  -D RLYMDE=1
+  -D MAX_LEDS=40
+  -D LED_TYPES=TYPE_WS2812_RGB
+  -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB
+  -D ABL_MILLIAMPS_DEFAULT=850
+  -D WLED_DISABLE_2D               ; kleinste bin, matrix faken via LED map
+  -Os -flto -ffunction-sections -fdata-sections
+EOF
+
+          # schone build (geen oude objecten)
+          rm -rf .pio
+          pio run -e esp01_1m_full_mongol
 
       - name: Copy Files
         run: |
           cd $GITHUB_WORKSPACE
           find /tmp/WLEDtemp/WLED-main/.pio/build/esp01_1m_full_mongol/ -name '*.bin' -exec cp {} $GITHUB_WORKSPACE/ \;
-
           date -I | tr -d '\n' > $GITHUB_WORKSPACE/last_update_date.txt
 
       - name: Commit Files
