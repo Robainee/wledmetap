@@ -45,7 +45,7 @@ jobs:
           echo 'board = esp01_1m' >> platformio.ini
           echo 'framework = arduino' >> platformio.ini
           echo 'build_type = release' >> platformio.ini
-          echo 'board_build.ldscript = ldscript_1m128k' >> platformio.ini
+          echo 'board_build.ldscript = eagle.flash.1m128.ld' >> platformio.ini
           echo 'build_flags = -D USERMOD_UART_PRESET_NOTIFIER -D USERMOD_MULTI_RELAY -D USERMOD_MULTI_RELAY_ID=1338 -D LEDPIN=4 -D RLYPIN=16 -D RLYMDE=1 -D MAX_LEDS=40 -D LED_TYPES=TYPE_WS2812_RGB -D DEFAULT_LED_COLOR_ORDER=COL_ORDER_GRB -D ABL_MILLIAMPS_DEFAULT=850 -D WLED_USE_MINIMAL_UI -D WLED_DISABLE_MQTT -D WLED_DISABLE_ALEXA -D WLED_DISABLE_HUESYNC -D WLED_DISABLE_DMX -D WLED_DISABLE_E131 -D WLED_DISABLE_ESPNOW -D WLED_DISABLE_IMPROV -D WLED_DISABLE_WEBSOCKETS -D WLED_DISABLE_ANALOG_LEDS -D WLED_DISABLE_INFRARED -D WLED_DISABLE_BLYNK -D WLED_DISABLE_SHELLY_DIMMER -D WLED_DISABLE_HDL -D WLED_DISABLE_DISCOVERY -D WLED_DISABLE_2D -D WLED_DISABLE_OTA -D PIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY_LOW_FLASH -Os -flto -ffunction-sections -fdata-sections -Wl,--gc-sections' >> platformio.ini
           echo 'build_unflags = -g' >> platformio.ini
           echo 'upload_speed = 115200' >> platformio.ini
