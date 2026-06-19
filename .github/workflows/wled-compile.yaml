@@ -30,20 +30,17 @@ jobs:
         cd `cat /tmp/WLEDtemp/wledfoldername`
         
         # =========================================================================
-        # RECHTSTREEKS IN DE MEUK: PYTHON 3.9 FIX VOOR SENPAI DESU! ~NYAN
+        # THE ULTIMATE PYTHON 3.9 BLITZKRIEG: FIX ALLES IN DE MAP DESU! ~NYAN
         # =========================================================================
-        if [ -f pio-scripts/load_usermods.py ]; then
-          sed -i 's/str | None/str/g' pio-scripts/load_usermods.py
+        if [ -d pio-scripts ]; then
+          sed -i 's/str | None/str/g' pio-scripts/*.py
         fi
         # =========================================================================
         
         npm install
         echo '[env:custom_build]' >>platformio.ini
         echo 'extends = env:esp32c3dev' >>platformio.ini
-        
-        # Losse aanhalingsteken aan het einde hieronder is kankersnel gefixt desu!
         echo 'build_flags = ${env:esp32c3dev.build_flags} -D WLED_DISABLE_MQTT -D WLED_DISABLE_LOXONE -D WLED_DISABLE_ALEXA -D WLED_DISABLE_HUESYNC -D WLED_DISABLE_USERMODS' >>platformio.ini
-        
         echo 'build_unflags= -D WLED_RELEASE_NAME' >>platformio.ini
         pio run -e custom_build || pio run -e custom_build
         
